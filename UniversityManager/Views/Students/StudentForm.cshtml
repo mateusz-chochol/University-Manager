@@ -1,0 +1,139 @@
+﻿@using UniversityManager.Models
+@model UniversityManager.ViewModels.StudentFormViewModel
+@{
+    ViewBag.Title = "Student";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.Student.Id == 0)
+{
+    <h2>Add student</h2>
+}
+else
+{
+    <h2>Edit student</h2>
+}
+
+    @*<form id="student" name="student">
+        <div class="form-group">
+            <label>Name</label>
+            <div class="tt-container">
+                <input id="name" name="name" data-rule-validStudentName="true" required type="text" value="@Model.Student.Name" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Surname</label>
+            <div class="tt-container">
+                <input id="surname" name="surname" data-rule-validStudentSurname="true" required type="text" value="@Model.Student.Surname" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Album ID</label>
+            <div class="tt-container">
+                <input id="albumId" name="albumId" data-rule-validStudentAlbumId="true" required type="text" value="@Model.Student.AlbumId" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Subjects</label>
+            <div class="tt-container">
+                <input id="subjects" name="subjects" data-rule-validStudentSubject="true" type="text" value="" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <ul id="subjectsList" class="list-group"></ul>
+            </div>
+        </div>
+
+        <button class="btn btn-primary">Save</button>
+    </form>*@
+
+@using (Html.BeginForm("Save", "Students"))
+{
+    @Html.ValidationSummary(true, "Please fix the following problems")
+    <div class="form-group">
+        @Html.LabelFor(s => s.Student.Name)
+        @Html.TextBoxFor(s => s.Student.Name, new {@class = "form-control"})
+        @Html.ValidationMessageFor(s => s.Student.Name)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(s => s.Student.Surname)
+        @Html.TextBoxFor(s => s.Student.Surname, new {@class = "form-control"})
+        @Html.ValidationMessageFor(s => s.Student.Surname)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(s => s.Student.AlbumId)
+        @Html.TextBoxFor(s => s.Student.AlbumId, new {@class = "form-control"})
+        @Html.ValidationMessageFor(s => s.Student.AlbumId)
+    </div>
+    <div class="form-group">
+        @Html.HiddenFor(s => s.Student.Subjects, new List<Subject>())
+        @Html.LabelFor(s => s.Subjects)
+        @Html.DropDownListFor(s => s.SubjectsIds, new SelectList(Model.Subjects, "Id", "Name"), new {@class = "form-control", @multiple = true, size = Model.Subjects.Count})
+        @{
+            foreach (var id in Model.SubjectsIds)
+            {
+                @Html.Hidden("Student.Subjects[" + id + "]", Model.Subjects.Single(s => s.Id == id))
+            }
+        }
+    </div>
+    @Html.HiddenFor(s => s.Student.Id)
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <button class="btn btn-primary">Save</button>
+    </div>
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @*<script>
+        $(document).ready(function () {
+            var vm = {
+                subjectsId: []
+            };
+
+            var subjects = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/subjects?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#subjects').typeahead({
+                minLength: 3,
+                highlight: true
+            }, {
+                name: 'subjects',
+                display: 'name',
+                source: subjects
+                }).on("typeahead:select", function(e, subject) {
+                    $("#student").append("<li class='list-group-item col-md-3'>" + subject.name + "</li>");
+                    $("#subjects").typeahead("val", "");
+
+                    vm.subjectsId.push(subject.id);
+            });
+        });
+
+        var validator = $("#student").validate({
+            submitHandler: function() {
+                vm.name = $("#name").val();
+                vm.surname = $("#surname").val();
+                vm.albumId = $("#albumId").val();
+
+                $.ajax({
+                    url: "/api/students",
+                    method: "post",
+                    data: vm
+                });
+                return false;
+            }
+        });
+
+    </script>*@
+}
